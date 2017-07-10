@@ -22,3 +22,4 @@ protobuf是一种灵活、高效、自动序列化数据结构的存储格式。
 
 ## 三、 protobuf的使用 ##
 
+message=struct
