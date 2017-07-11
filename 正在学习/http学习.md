@@ -46,9 +46,58 @@
 
 # Fiddler抓包 #
 
-&emsp;Fiddler通过设置本地http代理用来捕获计算机与网络之间传送的http数据包，通过分析数据包可以查看接口是否调用正确，数据返回是否正确，还可以对http数据包进行重发、编辑和转存。
+&emsp;Fiddler专门捕获计算机与网络之间传送的http数据包，进行通过分析数据包可以查看接口是否调用正确，数据返回是否正确，还可以对http数据包进行重发、编辑和转存。
 
 
 # wireshark #
 
-&emsp;wireshark可以截取链路层、网络层、传输层和应用层的所有数据包，并且显示网络数据包的详细信息。
+&emsp;wireshark可以截取链路层、网络层、传输层和应用层的所有数据包，并且显示网络数据包的详细信息。由于安全原因，wireshark只能查看网络包，不能修改。
+
+## 1. 捕获过滤 ##
+
+&emsp;wireshark捕获到的数据包数量非常大，为了便于分析，需要对对捕获的数据包进行过滤：
+
+- IP过滤
+
+&emsp;&emsp;ip.src eq 192.168.1.1 显示特定IP发来的数据包
+
+&emsp;&emsp;ip.dst eq [ip-addr] 显示特定IP接收到的数据包
+
+&emsp;&emsp;ip.addr == [ip-addr] 显示特定IP接受和发送的数据包
+
+- 端口过滤
+
+&emsp;&emsp;tcp.port == [port] 
+
+&emsp;&emsp;tcp.dstport == [port]
+
+&emsp;&emsp;tcp.srcport == [port]
+
+&emsp;&emsp;tcp.port >= [port] 过滤某范围的端口
+
+- 协议过滤
+
+&emsp;&emsp;直接输入协议名称： http/tcp/udp/ftp/icmp/ssl/dns/等
+
+&emsp;&emsp;排除协议： !http 或者 not http
+
+- 包长度过滤
+
+&emsp;&emsp;tcp.len
+
+&emsp;&emsp;udp.len
+
+&emsp;&emsp;ip.len
+
+&emsp;&emsp;frame.len
+
+- http模式过滤
+
+&emsp;&emsp; http.request.method == POST/GET/PUT... 按请求方法过滤
+
+&emsp;&emsp; http.request.uri 按请求的资源标识符过滤
+
+&emsp;&emsp; http contains "" 按http包中的内容过滤
+
+
+
