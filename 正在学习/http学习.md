@@ -2,7 +2,7 @@
 
 <font size=4 face=K>
 
-&emsp;http协议是用于从www服务器传输超文本到本地浏览器位于传送协议，基于TCP/IP通信协议传递数据，数据的传递格式是http包。
+&emsp;http协议是用于从服务器传输超文本到本地浏览器位于传送协议，基于TCP/IP通信协议传递数据，数据的传递格式是http包。
 
 &emsp;http协议由请求和相应构成，总是由客户端向服务器发起请求，服务器收到请求想客户端返回响应。
 
@@ -10,23 +10,27 @@
 
 客户端向服务器发送http的请求有三个部分构成：
 
-- 第一行：请求方法+URL+协议/版本
+- 起始行：请求方法+URL+协议/版本，对报文进行描述
+
+&emsp;&emsp;例子：GET&ensp;/TEST/test.txt&ensp;HTTP/1.1
 	
-- 中间：请求头部
+- 头部：包含数据包的属性，可以为零个和多个
 
-	包含客户端环境和请求正文的相关信息
+&emsp;&emsp;格式 { 字段：值 }
 
-- 最后一行：请求正文
+- 主体：请求正文
 
 ## 2. http的应答包 ##
 
-服务器收到客户端的请求，向客户端发送应答包：
+应答包的组成和请求包大致相同：
 
-- 第一行：协议+状态代码+描述
+- 起始行：协议/版本+状态代码+状态描述
 
-- 中间：应答包头部
+&emsp;&emsp;例子：HTTP/1.0&ensp;200&ensp;OK
 
-- 最后一行：应答正文
+- 头部
+
+- 主体：应答正文
 
 ## 3. http的请求方法 ##
 
@@ -78,8 +82,77 @@
 
 &emsp;&emsp;203：Non-Authoritative Information，表示实体首部包含的信息不是来源于服务器本身，而是中间节点上面的副本
 
-&emsp;&emsp;204：No Content，服务器的响应包
+&emsp;&emsp;204：No Content，服务器的响应包包含若干首部和一个状态行，但是没有主体部分。
 
+- 300-399——重定向状态码
+
+&emsp;&emsp;300：Multiple Choices，客户端的请求指向多个URL
+
+&emsp;&emsp;301：Moved Permanently，请求的URL已经被移除，响应包中的头部包含资源现在的URL
+
+- 400-499——客户端错误状态码
+
+&emsp;&emsp;400：Bad Request，告知客户端发送了一个错误的请求
+
+&emsp;&emsp;401：Unauthorized，客户端需要认证
+
+&emsp;&emsp;403：Forbidden，请求被服务器拒绝
+
+&emsp;&emsp;404：Not Found，服务器无法找到所请求的URL
+
+&emsp;&emsp;405：Method Not Allowed，请求方法不受服务器支持
+
+- 500-599——服务器错误状态码
+
+&emsp;&emsp;500：Internal Server Error，服务器收到阻碍
+
+&emsp;&emsp;501 Not Implemented，请求超出服务器能力范围
+
+&emsp;&emsp;502：Bad Gateway，代理或网关使用的服务器收到伪响应
+
+## 4. 数据包首部 ##
+
+### 4.1 首部分类 ###
+
+- 通用首部：请求包和响应包都会包含
+
+&emsp;&emsp;Date： Tue, 3 Oct 1974 02；15;00 GMT
+
+- 请求首部：提供更多有关请求的信息
+
+&emsp;&emsp;Accept: \*/\*
+
+- 响应首部：提供更多有关响应的信息
+
+&emsp;&emsp;Server: Tiki-Hut/1.0
+
+- 实体首部：描述数据包主题的长度和内容
+
+&emsp;&emsp;Content-Type: text/html; charset=iso-latin-1
+
+- 扩展首部：规范中没有定义的其他首部
+
+&emsp;&emsp;例子：
+
+&emsp;&emsp;Date:Tue,3Oct 1997 02:16:03 GMT&emsp;服务器产生响应的日期
+
+&emsp;&emsp;Content-length:15040&emsp;实体部分包含了15040字节的数据
+
+&emsp;&emsp;Content-type:image/gif&emsp;实体部分的类型：gif图片
+
+### 4.2 首部延续行 ###
+
+&emsp;&emsp;较长的首部可以分为多行表示，多出来的行前面至少需要一个空格或者制表符
+
+&emsp;&emsp;HTTP/1.0 200 OK
+
+&emsp;&emsp;Content-Type： image/gif
+
+&emsp;&emsp;Content-Length: 8527
+
+&emsp;&emsp;Server: Test Server
+
+&emsp;&emsp;&emsp;&emsp;Version 1.0
 
 # Fiddler抓包 #
 
