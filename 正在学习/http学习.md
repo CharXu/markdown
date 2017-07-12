@@ -10,13 +10,13 @@
 
 客户端向服务器发送http的请求有三个部分构成：
 
-- 起始行：请求方法+URL+协议/版本，对报文进行描述
+- 起始行：请求方法+URL+协议/版本，对报文进行描述，后面接回车符+换行符
 
 &emsp;&emsp;例子：GET&ensp;/TEST/test.txt&ensp;HTTP/1.1
 	
 - 头部：包含数据包的属性，可以为零个和多个
 
-&emsp;&emsp;格式 { 字段：值 }
+&emsp;&emsp;格式 { 字段：值 } 回车符+换行符
 
 - 主体：请求正文
 
@@ -116,29 +116,61 @@
 
 - 通用首部：请求包和响应包都会包含
 
-&emsp;&emsp;Date： Tue, 3 Oct 1974 02；15;00 GMT
+&emsp;&emsp;例子：Date： Tue, 3 Oct 1974 02；15;00 GMT
+
+&emsp;&emsp;Connection：允许客户端和服务器指定与请求/响应连接有关的选项
+
+&emsp;&emsp;Date：描述数据包创建的日期
+
+&emsp;&emsp;MIME-Version：描述客户端的MIME版本
+
+&emsp;&emsp;Trailer：数据包采用分块传输编码，用Trailer列出首部集合
+
+&emsp;&emsp;Transfer-Encoding：数据包的编码格式
+
+&emsp;&emsp;Update：客户端可能想要使用的新版本或新协议
+
+&emsp;&emsp;Via：显示报文经过的中间节点
 
 - 请求首部：提供更多有关请求的信息
 
-&emsp;&emsp;Accept: \*/\*
+&emsp;&emsp;例子：Accept: \*/\*
+
+&emsp;&emsp;Client-IP：客户端的IP地址
+
+&emsp;&emsp;From：客户端的E-mail地址
+
+&emsp;&emsp;Host：服务器的主机名和端口号
+
+&emsp;&emsp;Referer：当前请求的URL
+
+&emsp;&emsp;UA-Color：客户端显示的显示颜色
+
+&emsp;&emsp;UA-CPU：客户端CPU的类型和制造商
+
+&emsp;&emsp;UA-OS：客户端的操作系统和版本
+
+&emsp;&emsp;User-Agent：发起请求的应用程序名称
 
 - 响应首部：提供更多有关响应的信息
 
-&emsp;&emsp;Server: Tiki-Hut/1.0
+&emsp;&emsp;例子：Server: Tiki-Hut/1.0
+
+&emsp;&emsp;Proxy-Connection：客户端和代理之间指定与连接有关的选项
+
+&emsp;&emsp;Server：表示服务器的名字或者注释
 
 - 实体首部：描述数据包主题的长度和内容
 
-&emsp;&emsp;Content-Type: text/html; charset=iso-latin-1
+&emsp;&emsp;例子：Content-Type: text/html; charset=iso-latin-1
+
+&emsp;&emsp;Content-Length：实体部分的长度
+
+&emsp;&emsp;Content-type：实体对象的媒体类型
 
 - 扩展首部：规范中没有定义的其他首部
 
-&emsp;&emsp;例子：
-
-&emsp;&emsp;Date:Tue,3Oct 1997 02:16:03 GMT&emsp;服务器产生响应的日期
-
-&emsp;&emsp;Content-length:15040&emsp;实体部分包含了15040字节的数据
-
-&emsp;&emsp;Content-type:image/gif&emsp;实体部分的类型：gif图片
+&emsp;&emsp;Cookie：用于客户端识别和跟踪的扩展首部
 
 ### 4.2 首部延续行 ###
 
