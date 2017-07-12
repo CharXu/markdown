@@ -144,6 +144,8 @@
 
 &emsp;&emsp;Referer：当前请求的URL
 
+&emsp;&emsp;Accept：客户端能接受的mime
+
 &emsp;&emsp;UA-Color：客户端显示的显示颜色
 
 &emsp;&emsp;UA-CPU：客户端CPU的类型和制造商
