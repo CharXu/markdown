@@ -22,8 +22,8 @@ func main() {
 
 	//命令行参数
 	cFlag := flag.Int("c", 1, "并发的连接数concurrent connects")
-	uFlag := flag.String("u", "http://localhost", "测试的URL")
-	mFlag := flag.String("m", "GEt", "http的请求方法, 暂时只有GET")
+	uFlag := flag.String("u", "http://localhost", "测试的URL，格式：http://hostname")
+	mFlag := flag.String("m", "GET", "http的请求方法, 暂时只有GET")
 
 	fmt.Println("method", *mFlag)
 
@@ -40,7 +40,7 @@ func main() {
 	ch := make(chan respMsg)
 
 	for i := 0; i < *cFlag; i++ {
-		go GoRequest(*uFlag, ch)
+		go GoRequest(*uFlag, *mFlag, ch)
 		respmsg = <-ch
 		times = append(times, respmsg.resptime)
 		bytes = append(bytes, respmsg.respbytes)
@@ -70,32 +70,34 @@ func main() {
 	}
 	fmt.Println("total transferred: ", totalbytes)
 	fmt.Println("Average transferred: ", totalbytes/int64(*cFlag))
+	fmt.Print(times)
 
 }
 
 // GoRequest ...
 // 发送请求
-func GoRequest(url string, ch chan respMsg) {
+func GoRequest(url string, method string, ch chan respMsg) {
 
-	//var reqs *http.Request
-	// client := &http.Client{}
-	// b := strings.NewReader("name=cjb")
+	var reqs *http.Request
+	client := &http.Client{}
 
-	// switch method {
-	// case "GET":
-	// 	req, err := http.NewRequest(method, url, b)
-	// 	if err != nil {
-	// 		fmt.Println("request err : ", err)
-	// 	}
-	// 	reqs = req
-	// }
+	switch method {
+	case "GET":
+		req, err := http.NewRequest(method, url, nil)
+		if err != nil {
+			fmt.Println("request err : ", err)
+		}
+		reqs = req
+		//case "POST":
 
-	// req.Header.Set()
+	}
+
+	// req.Header.Set("")
 	// req.Header.Set()
 	// req.Header.Set()
 
 	start := time.Now()
-	respServer, err := http.Get(url)
+	respServer, err := client.Do(reqs)
 	resptime := time.Since(start).Seconds()
 
 	defer respServer.Body.Close()
@@ -105,7 +107,6 @@ func GoRequest(url string, ch chan respMsg) {
 	}
 
 	respbytes, err := io.Copy(ioutil.Discard, respServer.Body)
-
 	serverInfo := respServer.Header.Get("Server")
 	doclen := respServer.ContentLength
 
