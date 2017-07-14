@@ -51,7 +51,7 @@ func main() {
 	fmt.Println("ServerInfo: ", respmsg.serverInfo)
 	fmt.Println("Server Host: ", strings.TrimPrefix(*uFlag, "http://"))
 	fmt.Println("Concurrent Level: ", *cFlag)
-	fmt.Printf("Total Test Time: %.2fs\n", totaltime) //请求时间
+	fmt.Printf("Total Test Time: %.4fs\n", totaltime) //请求时间
 	fmt.Println("timeslen: ", len(times))             //请求次数
 	fmt.Println("Document length: ", respmsg.doclen)
 
@@ -68,9 +68,8 @@ func main() {
 	for _, i := range bytes {
 		totalbytes = totalbytes + i
 	}
-	fmt.Println("total transferred: ", totalbytes)
-	fmt.Println("Average transferred: ", totalbytes/int64(*cFlag))
-	fmt.Print(times)
+	fmt.Println("total transferred: ", totalbytes, "bytes")
+	fmt.Println("Average transferred: ", totalbytes/int64(*cFlag), "bytes")
 
 }
 
