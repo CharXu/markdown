@@ -12,8 +12,10 @@ import (
 
 //服务器返回的信息
 type respMsg struct {
-	respbytes int64
-	resptime  float64
+	respbytes  int64
+	resptime   float64
+	serverInfo string
+	doclen     int64
 }
 
 func main() {
@@ -30,6 +32,7 @@ func main() {
 	var respmsg respMsg
 
 	var times []float64
+	var bytes []int64
 
 	//并发请求
 	start := time.Now()
@@ -40,20 +43,31 @@ func main() {
 		go GoRequest(*uFlag, ch)
 		respmsg = <-ch
 		times = append(times, respmsg.resptime)
+		bytes = append(bytes, respmsg.respbytes)
 	}
 
 	totaltime := time.Since(start).Seconds()
 
+	fmt.Println("ServerInfo: ", respmsg.serverInfo)
 	fmt.Println("Server Host: ", strings.TrimPrefix(*uFlag, "http://"))
 	fmt.Println("Concurrent Level: ", *cFlag)
-	fmt.Printf("Total Time: %.2fs\n", totaltime)
-	fmt.Println("timeslen: ", len(times))
+	fmt.Printf("Total Time: %.2fs\n", totaltime) //请求时间
+	fmt.Println("timeslen: ", len(times))        //请求次数
+	fmt.Println("Document length: ", respmsg.doclen)
 
+	//平均请求时间
 	var avetime float64
 	for _, i := range times {
 		avetime = avetime + i
 	}
 	fmt.Printf("averagetime: %.4fs\n", avetime/float64(len(times)))
+
+	//请求总字节数
+	var totalbytes int64
+	for _, i := range bytes {
+		totalbytes = totalbytes + i
+	}
+	fmt.Println("total transferred: ", totalbytes)
 
 }
 
@@ -87,8 +101,13 @@ func GoRequest(url string, ch chan respMsg) {
 		return
 	}
 	respbytes, err := io.Copy(ioutil.Discard, respServer.Body)
+
+	serverInfo := respServer.Header.Get("Server")
+
+	doclen := respServer.ContentLength
+
 	resptime := time.Since(start).Seconds()
-	respmsg := respMsg{respbytes, resptime}
+	respmsg := respMsg{respbytes, resptime, serverInfo, doclen}
 
 	ch <- respmsg
 }
