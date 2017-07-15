@@ -25,8 +25,6 @@ func main() {
 	uFlag := flag.String("u", "http://localhost", "测试的URL，格式：http://hostname")
 	mFlag := flag.String("m", "GET", "http的请求方法, 暂时只有GET")
 
-	fmt.Println("method", *mFlag)
-
 	flag.Parse()
 
 	var respmsg respMsg
@@ -34,13 +32,15 @@ func main() {
 	var times []float64
 	var bytes []int64
 
+	var client = new(http.Client)
+
 	//并发请求
 	start := time.Now()
 
 	ch := make(chan respMsg)
 
 	for i := 0; i < *cFlag; i++ {
-		go GoRequest(*uFlag, *mFlag, ch)
+		go GoRequest(client, *uFlag, *mFlag, ch)
 		respmsg = <-ch
 		times = append(times, respmsg.resptime)
 		bytes = append(bytes, respmsg.respbytes)
@@ -75,20 +75,11 @@ func main() {
 
 // GoRequest ...
 // 发送请求
-func GoRequest(url string, method string, ch chan respMsg) {
+func GoRequest(client *http.Client, url string, method string, ch chan respMsg) {
 
-	var reqs *http.Request
-	client := &http.Client{}
-
-	switch method {
-	case "GET":
-		req, err := http.NewRequest(method, url, nil)
-		if err != nil {
-			fmt.Println("request err : ", err)
-		}
-		reqs = req
-		//case "POST":
-
+	req, err := http.NewRequest(method, url, nil)
+	if err != nil {
+		fmt.Println("request err : ", err)
 	}
 
 	// req.Header.Set("")
@@ -96,8 +87,12 @@ func GoRequest(url string, method string, ch chan respMsg) {
 	// req.Header.Set()
 
 	start := time.Now()
-	respServer, err := client.Do(reqs)
+	respServer, err := client.Do(req)
 	resptime := time.Since(start).Seconds()
+
+	if respServer == nil {
+		fmt.Println("Maybe the server is not avalible")
+	}
 
 	defer respServer.Body.Close()
 	if err != nil {
