@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package aladinfun.TripleDream.proto;
+
+import "enum.proto";
+
+// synthetic component
+message Component {
+    string ID = 1; // component name
+}
+
+message Prize {
+    uint32 type  = 1;  // PrizeType
+    uint32 data1 = 2;
+    uint32 data2 = 3;
+    uint32 data3 = 4;
+}

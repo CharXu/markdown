@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"io"
@@ -8,7 +9,11 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/golang/protobuf/proto"
 )
+
+import pb "char/markdown/code/StressTesting/pbtest"
 
 //服务器返回的信息
 type respMsg struct {
@@ -73,7 +78,7 @@ func main() {
 	fmt.Printf("Total Test Time: %.4fs\n", totaltime)
 	fmt.Printf("time per connection : %.4fs\n", totalRequestTime/float64(*cFlag))
 	fmt.Printf("Time per request : %.4fs\n", totalRequestTime/float64(*nFlag))
-	fmt.Println("Document length: ", totalTransferBytes/int64(totalRequestTime))
+	//fmt.Println("Document length: ", totalTransferBytes/int64(totalRequestTime))
 }
 
 // GoRequest ...
@@ -81,7 +86,33 @@ func main() {
 func GoRequest(url string, method string, eachRequest int, ch chan *respMsg) {
 	client := &http.Client{}
 	respmsg := &respMsg{}
-	req, err := http.NewRequest(method, url, nil)
+
+	studentpb := &pb.Student{
+		Men: &pb.Men{
+			Gender: "boy",
+			Height: 175,
+			Weight: 62,
+		},
+		School:    "NWPU",
+		Apartment: "Astronaut",
+	}
+
+	studentbyte, err := proto.Marshal(studentpb)
+	if err != nil {
+		fmt.Println("Marshal err : ", err)
+		return
+	}
+
+	studentreq := bytes.NewReader(studentbyte)
+	studentreq = &studentreq
+
+	// pbmessage := &package.
+
+	// pbdata := proto.Marshal()
+
+	// databytes := bytes.NewReader(pbdata)
+
+	req, err := http.NewRequest(method, url, studentreq)
 	if err != nil {
 		fmt.Println("request err : ", err)
 		return
@@ -95,7 +126,6 @@ func GoRequest(url string, method string, eachRequest int, ch chan *respMsg) {
 	var doclenonerequest int64
 
 	for i := 0; i < eachRequest; i++ {
-
 		start := time.Now()
 		respServer, err := client.Do(req)
 		if err != nil {

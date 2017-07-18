@@ -1,17 +1,20 @@
 package main
 
 import (
-	"example"
-	"github.com/golang/protobuf/proto"
 	"fmt"
+	"log"
+
+	"char/markdown/code/protobuf/example"
+
+	"github.com/golang/protobuf/proto"
 )
 
 func main() {
 	test := &example.Test{
-		Label: proto.String("Hello"),
-		Type: proto.Int32(17)
-		OptionalGroup: &example.Test_Group {
-			RequiredField: proto.String("good bye"),
+		Label: "Hello",
+		Type:  17,
+		OptionalGroup: &example.Test_Group{
+			RequiedField: "good bye",
 		},
 	}
 
@@ -20,5 +23,14 @@ func main() {
 		fmt.Println("Marshal err :", err)
 	}
 
-	newTest
+	newTest := &example.Test{}
+	err = proto.Unmarshal(data, newTest)
+	if err != nil {
+		log.Fatal("unmarshaling error: ", err)
+	}
+	if test.GetLabel() != newTest.GetLabel() {
+		log.Fatalf("data mistmatch %q != %q", test.GetLabel(), newTest.GetLabel())
+		return
+	}
+	fmt.Print("Label is :", test.GetLabel())
 }

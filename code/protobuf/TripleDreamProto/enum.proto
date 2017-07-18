@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package aladinfun.TripleDream.proto;
+
+enum LOGIN_TYPE {
+    LOGIN_TYPE_INIT     = 0;
+    LOGIN_TYPE_GUEST    = 10;
+    LOGIN_TYPE_FACEBOOK = 20;
+}
+
+enum BAG_TYPE {
+    BAG_TYPE_INIT     = 0;
+    BAG_TYPE_USER     = 1;
+    BAG_TYPE_ACTIVITY = 2;
+}
+
+enum GENDER_TYPE {
+    GENDER_TYPE_INIT   = 0; // unknown
+    GENDER_TYPE_MALE   = 1;
+    GENDER_TYPE_FEMALE = 2;
+}
+
+enum PRIZE_TYPE {
+    PRIZE_TYPE_INIT    = 0;
+    PRIZE_TYPE_DIAMOND = 1;
+    PRIZE_TYPE_GOLD    = 2;
+    PRIZE_TYPE_PROP    = 3;
+}
+
+enum DEDUCT_TYPE {
+    DEDUCT_TYPE_INIT    = 0;
+    DEDUCT_TYPE_DIAMOND = 1;
+    DEDUCT_TYPE_GOLD    = 2;
+    DEDUCT_TYPE_PROP    = 3;
+}
+
+// building status, building may have several status in the same time
+enum BD_STATUS {
+    BD_STATUS_INIT   = 0;
+    BD_STATUS_LOOTED = 0x1; // whether beening looted
+    BD_STATUS_SHIELD = 0x2;
+    BD_STATUS_TRAP   = 0x3;
+}

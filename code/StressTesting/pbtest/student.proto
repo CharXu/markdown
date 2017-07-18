@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package pbtest;
+
+import "men.proto";
+
+message Student {
+    Men men = 1;
+    string School = 2;
+    string Apartment = 3;
+}

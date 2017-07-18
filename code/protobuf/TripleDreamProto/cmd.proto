@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package aladinfun.TripleDream.proto;
+
+
+// cmd 组成规则，服务器mod*100000+cmd
+// 每组服务器cmd之间用 _BEGIN _END 包起来
+enum TDT_CMD {
+    INVALID_CMD = 0;
+
+    // game server
+    GAME_CMD_BEGIN = 200000;
+
+    GAME_CMD_HELLO_REQ             = 200001;
+    GAME_CMD_HELLO_RSP             = 200002;
+
+    GAME_CMD_LOGIN_REQ             = 200003;
+    GAME_CMD_LOGIN_RSP             = 200004;
+
+    GAME_CMD_RANK_REQ              = 200005;
+    GAME_CMD_RANK_RSP              = 200006;
+
+    GAME_CMD_FRIEND_LIST_REQ       = 200007;
+    GAME_CMD_FRIEND_LIST_RSP       = 200008;
+
+    GAME_CMD_SETTLE_ROUND_REQ      = 200009;
+    GAME_CMD_SETTLE_ROUND_RSP      = 200010;
+
+    GAME_CMD_BUILD_REQ             = 200011;
+    GAME_CMD_BUILD_RSP             = 200012;
+
+    GAME_CMD_SET_BD_STATUS_REQ     = 200013;
+    GAME_CMD_SET_BD_STATUS_RSP     = 200014;
+
+    GAME_CMD_FRI_ISLAND_REQ        = 200015;
+    GAME_CMD_FRI_ISLAND_RSP        = 200016;
+
+    GAME_CMD_ISLAND_MAP_REQ        = 200017;
+    GAME_CMD_ISLAND_MAP_RSP        = 200018;
+
+    GAME_MSG_REQ                   = 200019;
+    GAME_MSG_RSP                   = 200020;
+
+    GAME_BUY_REQ                   = 200021;
+    GAME_BUY_RSP                   = 200022;
+
+    GAME_CMD_END = 299999;
+
+    // login server
+    AUTH_CMD_BEGIN = 300000;
+
+    AUTH_CMD_ACC_LOGIN_REQ = 300001;
+    AUTH_CMD_ACC_LOGIN_RSP = 300002;
+
+    AUTH_CMD_END   = 399999;
+
+    // core server
+    CORE_CMD_BEGIN   = 400000;
+
+    CORE_CMD_GET_USER_CORE_REQ = 400001;
+    CORE_CMD_GET_USER_CORE_RSP = 400002;
+
+    CORE_CMD_BUILD_REQ         = 400003;
+    CORE_CMD_BUILD_RSP         = 400004;
+
+    CORE_CMD_END   = 499999;
+}

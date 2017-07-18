@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package aladinfun.TripleDream.proto;
+
+import "enum.proto";
+import "base.proto";
+import "user.proto";
+import "db.proto";
+
+/*
+ login server
+*/
+
+message AccLoginReq {
+    string AccessToken = 1;
+    LOGIN_TYPE Type    = 2;
+}
+
+message AccLoginRsp {
+    RspHead Head      = 1;
+    UserSocial social = 2;
+}
+
+
+/*
+ core server
+*/
+
+message CoreGetUserCoreReq {
+    uint32 IsRegister = 1; // whether user register, "0" none "1" register
+}
+
+message CoreGetUserCoreRsp {
+    RspHead Head  = 1;
+    UserCore Core = 2;
+}
+
+message CoreChgUserCoreReq {
+    sint32 Diamond             = 1;
+    sint64 Gold                = 2;
+    sint32 Step                = 3;
+}
+
+message CoreChgUserCoreRsp {
+    RspHead Head  = 1;
+    UserCore Core = 2;
+}
+
+message CoreBuildReq {
+    uint32 Gold = 1;
+    uint32 Index   = 2; // building index
+    uint32 ToLevel = 3; // the level build to
+}
+
+message CoreBuildRsp {
+    RspHead Head = 1;
+    UserIsland Island = 2;
+}
