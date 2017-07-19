@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"flag"
 	"fmt"
 	"io"
@@ -10,10 +9,12 @@ import (
 	"strings"
 	"time"
 
+	pbtest "char/markdown/code/StressTesting/pbtest"
+
+	"bytes"
+
 	"github.com/golang/protobuf/proto"
 )
-
-import pb "char/markdown/code/StressTesting/pbtest"
 
 //服务器返回的信息
 type respMsg struct {
@@ -87,37 +88,26 @@ func GoRequest(url string, method string, eachRequest int, ch chan *respMsg) {
 	client := &http.Client{}
 	respmsg := &respMsg{}
 
-	studentpb := &pb.Student{
-		Men: &pb.Men{
-			Gender: "boy",
-			Height: 175,
-			Weight: 62,
-		},
-		School:    "NWPU",
-		Apartment: "Astronaut",
+	men := &pbtest.Men{
+		Gender: "men",
+		Height: 175,
+		Weight: 65,
 	}
 
-	studentbyte, err := proto.Marshal(studentpb)
+	reqbytes, err := proto.Marshal(men)
 	if err != nil {
-		fmt.Println("Marshal err : ", err)
+		fmt.Println("marshal err : ", err)
 		return
 	}
 
-	studentreq := bytes.NewReader(studentbyte)
-	studentreq = &studentreq
+	reqreader := bytes.NewReader(reqbytes)
 
-	// pbmessage := &package.
-
-	// pbdata := proto.Marshal()
-
-	// databytes := bytes.NewReader(pbdata)
-
-	req, err := http.NewRequest(method, url, studentreq)
+	req, err := http.NewRequest(method, url, reqreader)
 	if err != nil {
 		fmt.Println("request err : ", err)
 		return
 	}
-	// req.Header.Set("")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
 	// req.Header.Set()
 	// req.Header.Set()
 
@@ -126,6 +116,14 @@ func GoRequest(url string, method string, eachRequest int, ch chan *respMsg) {
 	var doclenonerequest int64
 
 	for i := 0; i < eachRequest; i++ {
+
+		req, err := http.NewRequest(method, url, reqreader)
+		if err != nil {
+			fmt.Println("request err : ", err)
+			return
+		}
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
+
 		start := time.Now()
 		respServer, err := client.Do(req)
 		if err != nil {

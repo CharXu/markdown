@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package loginreq;
+
+message loginreq {
+    enum LOGIN_TYPE {
+        LOGIN_TYPE_GUEST = 0;
+    }
+    LOGIN_TYPE Type = 1;
+    string AccessToken = 2;
+    enum GENDER_TYPE {
+        GENDER_TYPE_MALE = 0;
+    }
+    GENDER_TYPE Gender = 3;
+}
+
+message Packet {
+    PktHead Head = 1;
+    bytes Body = 2;
+}
+
+message PktHead {
+    PktOpt Opt = 1;
+    message PktInfo {
+        uint32 Cmd = 1;
+        uint32 Len = 2;
+    }
+    repeated PktInfo PktInfos = 2;
+}
+
+message PktOpt {
+    uint32 Version = 1;
+    uint64 Mtkey = 2;
+    uint64 Skey = 3;
+    uint32 Seq = 4;
+    uint64 Time = 5;
+    string UID = 6;
+    string Device = 7;
+    string Channel = 8;
+    string Lang = 9;
+}
+
+
