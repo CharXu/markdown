@@ -1,9 +1,7 @@
 package setpkt
 
 import (
-	"bytes"
 	"fmt"
-	"io"
 	"math/rand"
 	"strconv"
 	"time"
@@ -15,7 +13,9 @@ import (
 	cpt "aladinfun.com/TripleDream/TripleDreamServer/common/libs/crypto"
 )
 
-func SetloginPkt() (io.Reader, error) {
+//SetloginPkt ...
+//生成加密，编码之后的http请求主体
+func SetloginPkt() ([]byte, error) {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	token := strconv.Itoa(r.Intn(100000000))
 	loginreq := &tdproto.LoginReq{
@@ -59,15 +59,12 @@ func SetloginPkt() (io.Reader, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	loginreader := bytes.NewReader(loginbytescpt)
-
-	return loginreader, nil
+	return loginbytescpt, nil
 }
 
-func SetbuildPkt() (io.Reader, error) {
+func SetbuildPkt() ([]byte, error) {
 	buildreq := &tdproto.BuildReq{
-		Index:   2,
+		Index:   3,
 		ToLevel: 1,
 	}
 	buildbody, err := buildreq.Marshal()
@@ -106,15 +103,12 @@ func SetbuildPkt() (io.Reader, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	buildreader := bytes.NewReader(buildbytescpt)
-
-	return buildreader, nil
+	return buildbytescpt, nil
 }
 
 //SethelloPkt ...
 //hello请求
-func SethelloPkt() (io.Reader, error) {
+func SethelloPkt() ([]byte, error) {
 	helloreq := &tdproto.HelloReq{}
 	hellobody, err := helloreq.Marshal()
 	if err != nil {
@@ -153,8 +147,5 @@ func SethelloPkt() (io.Reader, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	helloreader := bytes.NewReader(hellobytescpt)
-
-	return helloreader, nil
+	return hellobytescpt, nil
 }

@@ -15,12 +15,12 @@ import (
 func main() {
 
 	//命令行参数
-	cFlag := flag.Int("c", 1, "并发的连接数concurrent connects")
-	nFlag := flag.Int("n", 1, "请求次数")
+	cFlag := flag.Int("c", 2, "并发的连接数concurrent connects")
+	nFlag := flag.Int("n", 4, "请求次数")
 	// tFlag := flag.Int("t", 0, "请求间隔时间(毫秒)")
 	uFlag := flag.String("u", "http://192.168.0.51/char", "测试的URL，格式：http://hostname")
 	mFlag := flag.String("m", "POST", "http的请求方法")
-	rFlag := flag.String("r", "hello", "which request you want to test")
+	rFlag := flag.String("r", "build", "which request you want to test")
 
 	flag.Parse()
 
