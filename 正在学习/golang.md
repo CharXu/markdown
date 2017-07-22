@@ -48,5 +48,48 @@ append函数必须有变量接收
 
 - 使用多重赋值
 
+## comma-ok断言检测 ##
+
+    value, ok := element.(Type)
+
+- value是接口实际存储变量的返回值
+
+- ok表示是否为真
+
+		v, ok := <- ch chan
+
+- 检测通道是否关闭
+
+## 指针接收器 ##
+
+- 当结构体通过指针接收器实现一个接口的函数的时候，实现接口不是结构体本身，而是指向接口的指针
+
+- 接口变量只能存储指针类型的变量
+
+
+
+    	type men interface {
+			think()
+		}
+		type student struct{
+			
+		}
+		func (s *student) think () {
+			
+		}
+
+		var m men
+		var s struct
+
+		m = &s
+
+
+## 函数的局部变量 ##
+
+- 函数内部通过：=初始化的变量，只在函数内部有效，函数外无法访问函数内部的变量
+
+- 但是return会自动把函数内部变量转化成全局变量
+		
+
 
 

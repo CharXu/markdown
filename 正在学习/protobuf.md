@@ -28,6 +28,10 @@
 
 - 允许定义多个message
 
+- 嵌套结构的message实例名和消息名称不能相同
+
 ## 编译proto文件 ##
 
     protoc -I=SRC＿Dir --go_out=DST＿DIR　SRC_DIR/FILENAEM.proto
+
+##  ##
