@@ -3,9 +3,7 @@ package setpkt
 import (
 	"crypto/rand"
 	"fmt"
-
 	"strconv"
-
 	cpt "aladinfun.com/TripleDream/TripleDreamServer/common/libs/crypto"
 	tdproto "aladinfun.com/TripleDream/TripleDreamServer/proto/autogen/aladinfun_TripleDream_proto"
 	afproto "aladinfun.com/TripleDream/TripleDreamServer/proto/autogen/aladinfun_proto"

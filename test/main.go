@@ -10,8 +10,8 @@ import (
 	"sync"
 	"time"
 
-	"aladinfun.com/TripleDream/TripleDreamServer/tools/stresstest/goreq"
-	"aladinfun.com/TripleDream/TripleDreamServer/tools/stresstest/mystruct"
+	"char/markdown/test/goreq"
+	"char/markdown/test/mystruct"
 )
 
 func inArray(str string, toSearch []string) (find bool) {

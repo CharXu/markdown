@@ -8,24 +8,28 @@ import (
 	"net/http"
 	"time"
 
-	"aladinfun.com/TripleDream/TripleDreamServer/tools/stresstest/getpkt"
-	"aladinfun.com/TripleDream/TripleDreamServer/tools/stresstest/islandBuild"
-	"aladinfun.com/TripleDream/TripleDreamServer/tools/stresstest/mystruct"
-	"aladinfun.com/TripleDream/TripleDreamServer/tools/stresstest/setpkt"
+	"char/markdown/test/getpkt"
+	"char/markdown/test/islandBuild"
+	"char/markdown/test/mystruct"
+	"char/markdown/test/setpkt"
 
 	"sync"
 
 	"os"
 
 	tdproto "aladinfun.com/TripleDream/TripleDreamServer/proto/autogen/aladinfun_TripleDream_proto"
+	"net"
+	"strings"
+	"aladinfun.com/TripleDream/TripleDreamServer/common/libs/etcd/client"
 )
 
 // GoRequest ...
 // 发送请求
 func GoRequest(url string, method string, eachRequest int, reqtype string, ch chan *mystruct.RespMsg, wg *sync.WaitGroup, timeDur int) {
 	defer wg.Done()
-	client := &http.Client{}
+	//client := &http.Client{}
 	respmsg := &mystruct.RespMsg{}
+
 
 	var reqbytes []byte
 	var firstuid string
@@ -59,6 +63,24 @@ func GoRequest(url string, method string, eachRequest int, reqtype string, ch ch
 		firstuid = uid
 	}
 
+	domain := strings.TrimPrefix(url, "httt://")
+	IPaddr, err := net.ResolveIPAddr("ip", domain)
+	if err != nil {
+		fmt.Println("ip address parse err: ", err)
+		return
+	}
+	tcpAddr, err := net.ResolveTCPAddr("tcp4", IPaddr)
+	if err != nil {
+		fmt.Println("tcp address err: ", err)
+		return
+	}
+	tcpConn, err := net.DialTCP("tcp", nil, tcpAddr)
+	if err != nil {
+		fmt.Println("build connection err: ", err)
+		return
+	}
+
+
 	var timeonerequest float64
 	var bytesonerequest int64
 	//var bodyonerequest []byte
@@ -69,22 +91,29 @@ func GoRequest(url string, method string, eachRequest int, reqtype string, ch ch
 
 	for i := 0; i < eachRequest; i++ {
 
-		reqreader.Reset(reqbytes)
-
-		req, err := http.NewRequest(method, url, reqreader)
-		if err != nil {
-			fmt.Println("set request set err: ", err)
-			return
-		}
-		req.Header.Set("Connection", "Keep-Alive")
+		//reqreader.Reset(reqbytes)
+		//
+		//req, err := http.NewRequest(method, url, reqreader)
+		//if err != nil {
+		//	fmt.Println("set request set err: ", err)
+		//	return
+		//}
+		//req.Header.Set("Connection", "Keep-Alive")
 
 		//开始请求
 		start := time.Now()
-		resp, err := client.Do(req)
+		//resp, err := client.Do(req)
+		//if err != nil {
+		//	fmt.Println("get response err: ", err)
+		//	return
+		//}
+
+
+		_, err := tcpConn.Write(reqbytes)
 		if err != nil {
-			fmt.Println("get response err: ", err)
-			return
+			fmt.Println("get response err: ",err)
 		}
+
 		resptime := time.Since(start).Seconds()
 
 		body, err := ioutil.ReadAll(resp.Body)

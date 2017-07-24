@@ -11,7 +11,7 @@ import (
 
 	"fmt"
 
-	"aladinfun.com/TripleDream/TripleDreamServer/tools/stresstest/setpkt"
+	"char/markdown/test/setpkt"
 )
 
 //SetbuildPkt ...
