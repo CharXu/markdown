@@ -6,11 +6,12 @@ import (
 	//"math/rand"
 	//"strconv"
 
-	"char/markdown/test/goreq"
-	"char/markdown/test/mystruct"
 	"strings"
 	"sync"
 	"time"
+
+	"aladinfun.com/TripleDream/TripleDreamServer/tools/stresstest/goreq"
+	"aladinfun.com/TripleDream/TripleDreamServer/tools/stresstest/mystruct"
 )
 
 func inArray(str string, toSearch []string) (find bool) {
@@ -27,9 +28,9 @@ func main() {
 
 	//命令行参数
 	allowRequests := []string{`build`, `login`, `rank`, `hello`}
-	cFlag := flag.Int("c", 2, "并发的连接数concurrent connects")
-	nFlag := flag.Int("n", 4, "所有的请求次数")
-	// tFlag := flag.Int("t", 0, "请求间隔时间(毫秒)")
+	cFlag := flag.Int("c", 1, "并发的连接数concurrent connects")
+	nFlag := flag.Int("n", 2, "所有的请求次数")
+	tFlag := flag.Int("t", 0, "请求间隔时间(毫秒)")
 	uFlag := flag.String("u", "http://192.168.0.51/char", "测试的URL，格式：http://hostname")
 	mFlag := flag.String("m", "POST", "http的请求方法")
 	rFlag := flag.String("r", "build", "which request you want to test")
@@ -49,10 +50,10 @@ func main() {
 		return
 	}
 
-	// if *tFlag < 0 || *tFlag > 1000 {
-	// 	fmt.Println("请求间隔时间为0-1000毫秒")
-	// 	return
-	// }
+	if *tFlag < 0 || *tFlag > 1000 {
+		fmt.Println("请求间隔时间为0-1000毫秒")
+		return
+	}
 
 	*mFlag = strings.ToUpper(*mFlag)
 	if *mFlag != "GET" && *mFlag != "POST" {
@@ -77,13 +78,12 @@ func main() {
 
 	start := time.Now()
 	for i := 0; i < *cFlag; i++ {
-		go goreq.GoRequest(*uFlag, *mFlag, eachRequest, *rFlag, ch, &wg)
+		go goreq.GoRequest(*uFlag, *mFlag, eachRequest, *rFlag, ch, &wg, *tFlag)
 	}
-	// wg.Wait()
+	//wg.Wait()
 
-	for i := 0; i < *nFlag; i++ {
+	for i := 0; i < *cFlag; i++ {
 		result := <-ch
-		//todo
 		totalRequestTime += result.Resptime
 		totalTransferBytes += result.Respbytes
 		serverresp = result.Body

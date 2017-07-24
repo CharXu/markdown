@@ -9,61 +9,61 @@ import (
 	tdproto "aladinfun.com/TripleDream/TripleDreamServer/proto/autogen/aladinfun_TripleDream_proto"
 	afproto "aladinfun.com/TripleDream/TripleDreamServer/proto/autogen/aladinfun_proto"
 
-	"char/markdown/test/setpkt"
 	"fmt"
-)
 
-var uid string
+	"aladinfun.com/TripleDream/TripleDreamServer/tools/stresstest/setpkt"
+)
 
 //SetbuildPkt ...
 //build前线登录获取UID
-func SetbuildPkt(method string, url string, no uint32, tolevel uint32, first bool) ([]byte, error) {
+func SetbuildPkt(method string, url string, no uint32, tolevel uint32, id string, first bool) ([]byte, string, error) {
 	if no < 0 || no > 4 || tolevel < 1 || tolevel > 5 {
-		return nil, fmt.Errorf("islandNo and tolevel err, can't set build Pkt")
+		return nil, "err", fmt.Errorf("islandNo and tolevel err, can't set build Pkt")
 	}
+	var uid string
 
 	if first {
 		client := &http.Client{}
 		logincpt, err := setpkt.SetloginPkt()
 		if err != nil {
-			return nil, err
+			return nil, "err", err
 		}
 		url = url + "/webLogin"
 
 		loginreader := bytes.NewReader(logincpt)
 		loginreq, err := http.NewRequest(method, url, loginreader)
 		if err != nil {
-			return nil, err
+			return nil, "err", err
 		}
 
 		loginresp, err := client.Do(loginreq)
 		if err != nil {
-			return nil, err
+			return nil, "err", err
 		}
 		loginbodybytes, err := ioutil.ReadAll(loginresp.Body)
 		if err != nil {
-			return nil, err
+			return nil, "err", err
 		}
 		loginresp.Body.Close()
 
 		loginbodydecode, _, err := cpt.Base64Decode(loginbodybytes)
 		if err != nil {
-			return nil, err
+			return nil, "err", err
 		}
 
 		var loginrspPkt afproto.Packet
 		err = loginrspPkt.Unmarshal(loginbodydecode)
 		if err != nil {
-			return nil, err
+			return nil, "err", err
 		}
 		loginPktbody := loginrspPkt.Body
 		var loginbody tdproto.LoginRsp
 		err = loginbody.Unmarshal(loginPktbody)
 		if err != nil {
-			return nil, err
+			return nil, "err", err
 		}
 		uid = loginbody.UserData.UID
-
+		id = uid
 	}
 
 	buildreq := &tdproto.BuildReq{
@@ -72,7 +72,7 @@ func SetbuildPkt(method string, url string, no uint32, tolevel uint32, first boo
 	}
 	buildbody, err := buildreq.Marshal()
 	if err != nil {
-		return nil, err
+		return nil, "err", err
 	}
 	buildPkt := &afproto.Packet{
 		Head: &afproto.PktHead{
@@ -82,7 +82,7 @@ func SetbuildPkt(method string, url string, no uint32, tolevel uint32, first boo
 				Skey:    1,
 				Seq:     1,
 				Time:    1,
-				UID:     uid,
+				UID:     id,
 				Device:  "1",
 				Channel: "1",
 				Lang:    "Zh",
@@ -98,17 +98,17 @@ func SetbuildPkt(method string, url string, no uint32, tolevel uint32, first boo
 	}
 	buildbytes, err := buildPkt.Marshal()
 	if err != nil {
-		return nil, err
+		return nil, "err", err
 	}
 
 	buildbytescpt, err := cpt.Base64Encode(buildbytes)
 	if err != nil {
-		return nil, err
+		return nil, "err", err
 	}
-	return buildbytescpt, nil
+	return buildbytescpt, uid, nil
 }
 
-func Islandlogic(method string, url string, islandlist []uint32) ([]byte, error) {
+func Islandlogic(method string, url string, uid string, islandlist []uint32) ([]byte, error) {
 	if islandlist == nil {
 		return nil, fmt.Errorf("island list is empty, please check outs")
 	}
@@ -120,7 +120,7 @@ func Islandlogic(method string, url string, islandlist []uint32) ([]byte, error)
 			return nil, fmt.Errorf("islandlist err")
 		}
 		if value < 5 {
-			buildcpt, err := SetbuildPkt(method, url, uint32(i), uint32(value+1), false)
+			buildcpt, _, err := SetbuildPkt(method, url, uint32(i), uint32(value+1), uid, false)
 			if err != nil {
 				return nil, err
 			}
@@ -128,7 +128,7 @@ func Islandlogic(method string, url string, islandlist []uint32) ([]byte, error)
 			break
 		}
 		if value == 5 && i == 4 {
-			buildcpt, err := SetbuildPkt(method, url, 0, 1, false)
+			buildcpt, _, err := SetbuildPkt(method, url, 0, 1, uid, false)
 			if err != nil {
 				return nil, err
 			}

@@ -27,6 +27,8 @@ append函数必须有变量接收
 
 ## Time包 ##
 
+- time.Sleep()：
+
 
 ## init函数 ##
 

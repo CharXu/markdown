@@ -4,6 +4,8 @@ import (
 	"crypto/rand"
 	"fmt"
 
+	"strconv"
+
 	cpt "aladinfun.com/TripleDream/TripleDreamServer/common/libs/crypto"
 	tdproto "aladinfun.com/TripleDream/TripleDreamServer/proto/autogen/aladinfun_TripleDream_proto"
 	afproto "aladinfun.com/TripleDream/TripleDreamServer/proto/autogen/aladinfun_proto"
@@ -12,9 +14,15 @@ import (
 //SetloginPkt ...
 //生成加密，编码之后的http请求主体
 func SetloginPkt() ([]byte, error) {
-	r := make([]byte, 10)
-	_, err := rand.Read(r)
-	token := string(r[:10])
+	randByteArr := make([]byte, 10)
+	_, err := rand.Read(randByteArr)
+	if err != nil {
+		return nil, err
+	}
+	var token string
+	for _, value := range randByteArr {
+		token += strconv.Itoa(int(value))
+	}
 	loginreq := &tdproto.LoginReq{
 		Type:        tdproto.LOGIN_TYPE_GUEST,
 		AccessToken: token,

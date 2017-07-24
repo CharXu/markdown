@@ -8,24 +8,27 @@ import (
 	"net/http"
 	"time"
 
-	"char/markdown/test/getpkt"
-	"char/markdown/test/islandBuild"
-	"char/markdown/test/mystruct"
-	"char/markdown/test/setpkt"
+	"aladinfun.com/TripleDream/TripleDreamServer/tools/stresstest/getpkt"
+	"aladinfun.com/TripleDream/TripleDreamServer/tools/stresstest/islandBuild"
+	"aladinfun.com/TripleDream/TripleDreamServer/tools/stresstest/mystruct"
+	"aladinfun.com/TripleDream/TripleDreamServer/tools/stresstest/setpkt"
 
 	"sync"
+
+	"os"
 
 	tdproto "aladinfun.com/TripleDream/TripleDreamServer/proto/autogen/aladinfun_TripleDream_proto"
 )
 
 // GoRequest ...
 // 发送请求
-func GoRequest(url string, method string, eachRequest int, reqtype string, ch chan *mystruct.RespMsg, wg *sync.WaitGroup) {
+func GoRequest(url string, method string, eachRequest int, reqtype string, ch chan *mystruct.RespMsg, wg *sync.WaitGroup, timeDur int) {
 	defer wg.Done()
 	client := &http.Client{}
 	respmsg := &mystruct.RespMsg{}
 
 	var reqbytes []byte
+	var firstuid string
 	switch reqtype {
 	case "hello":
 		hellocpt, err := setpkt.SethelloPkt()
@@ -46,13 +49,14 @@ func GoRequest(url string, method string, eachRequest int, reqtype string, ch ch
 		url += "/webLogin"
 
 	default:
-		buildcpt, err := islandBuild.SetbuildPkt(method, url, 0, 1, true)
+		buildcpt, uid, err := islandBuild.SetbuildPkt(method, url, 0, 1, "2", true)
 		if err != nil {
 			fmt.Println("build packet err: ", err)
 			return
 		}
 		reqbytes = buildcpt
 		url += "/webRequest"
+		firstuid = uid
 	}
 
 	var timeonerequest float64
@@ -61,8 +65,12 @@ func GoRequest(url string, method string, eachRequest int, reqtype string, ch ch
 	//var respPkt afproto.Packet
 	var respsrv mystruct.Respfromsrv
 
+	reqreader := bytes.NewReader(reqbytes)
+
 	for i := 0; i < eachRequest; i++ {
-		reqreader := bytes.NewReader(reqbytes)
+
+		reqreader.Reset(reqbytes)
+
 		req, err := http.NewRequest(method, url, reqreader)
 		if err != nil {
 			fmt.Println("set request set err: ", err)
@@ -111,16 +119,21 @@ func GoRequest(url string, method string, eachRequest int, reqtype string, ch ch
 			buildresp := new(tdproto.BuildRsp)
 			buildresp = value
 			list := buildresp.Island.GetBDList()
-			reqbytes, err = islandBuild.Islandlogic(method, url, list)
+			reqbytes, err = islandBuild.Islandlogic(method, url, firstuid, list)
 			if err != nil {
 				fmt.Println("build logic err : ", err)
 				return
 			}
-
 		}
-		respmsg.Body, respmsg.Resptime, respmsg.Respbytes = respsrv, timeonerequest, bytesonerequest
-		ch <- respmsg
+		time.Sleep(time.Duration(int64(timeDur)) * time.Millisecond)
+	}
+	respmsg.Body, respmsg.Resptime, respmsg.Respbytes = respsrv, timeonerequest, bytesonerequest
+	ch <- respmsg
+}
 
-		// time.Sleep(10 * time.Millisecond)
+func checkErrr(err error) {
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Fatal ero: %s", err.Error())
+		os.Exit(1)
 	}
 }
