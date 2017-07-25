@@ -35,3 +35,20 @@
     protoc -I=SRC＿Dir --go_out=DST＿DIR　SRC_DIR/FILENAEM.proto
 
 ##  ##
+
+proto编译器自动生成的方法：
+    Setter()
+    Getter()
+    Reset()
+    Equal()
+    GoString()
+    Marshal()
+    Marshal()
+    Unmarshal()
+    String()
+
+
+
+
+扩展一个消息的功能：
+    包装而不是继承一个消息类
