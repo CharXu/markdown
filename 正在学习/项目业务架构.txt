@@ -1,0 +1,50 @@
+##
+##项目业务架构说明
+##
+
+framework包
+    proc_base.go
+
+        IProto interface
+            Marshal()
+            Unmarshal()
+
+        IprocBase interface
+            Handle()
+            ParseReq()
+            SerializeRsp()
+
+        ProcBase struct
+            SerializeRsp()
+            ParseReq()
+
+
+
+
+
+game包
+    auth包
+
+    config包
+
+    proc包
+        build.go
+
+        fri_island.go
+
+        friend_list.go
+
+        hello.go
+
+        login.go
+
+
+        rank.go
+
+        settle_round.go
+
+        update.go
+
+    game.go
+        Run()
+        registerCmd()

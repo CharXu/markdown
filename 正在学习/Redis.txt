@@ -10,12 +10,12 @@ Redis: Remote Dictionary Server
 允许通过TCP连接读取数据
 
 支持的值数据结构:
-    字符串
-    散列类型
-    列表类型
-    集合类型
+    字符串 string
+    散列类型 hash
+    列表类型 list
+    集合类型 set
         集合运算
-    有序集合类型
+    有序集合类型 zset
 
 数据存储在内存中
 
@@ -62,4 +62,117 @@ Redis 可执行文件
 Redis入门
 ===================================================================================================================================================
 命令行不区分大小写
+
+所有命令都是原子操作
+
+
+简单命令
+    获取键名：keys patten支持通配符
+        通配符格式：
+            ? 匹配单个字符
+            * 匹配任意个字符
+            [] 匹配区间内任意一个字符
+            \x 匹配转义字符
+
+    判断一个键是否存在：exist key
+
+    删除键：del key 不支持通配符
+
+    获得键值的数据结构：type key
+
+
+字符串类型:string
+    单个字符串键存储的最大容量是512Mb
+
+赋值：set key value
+取值：get key
+
+
+
+键名习惯：对象类型：对象ID：对象属性
+
+自增ID：对象类型：count
+
+
+
+命令：
+    递增整数：incr key
+    指定减少：decr key
+    指定增加：incrby key value
+    指定减少：decrby key value
+
+    指定增加浮点数：incrbyfloat key value
+
+    尾部增加字符：append key value
+    读取字符串长度：strlen key（UTF-8编码）
+
+    同时获取多个键值：mget key ...
+    同时设置多个键值：mset key value key value ...
+
+    位操作命令：
+        获得指定位置的二进制位：getbit key position
+        设置指定位置的二进制位：setbit key offset value
+        获得键值二进制位为1的个数：bitcount key
+        获取指定字节二进制位为1的个数：bitcount key start end
+        位运算：bitop operation dstkey key1 key2
+        获取指定位第一次出现的偏移量：bitpos key bit [start] [end]
+
+
+
+散列类型：hash 存储字段和字段值的映射，字段值只能是字符串
+
+自由增减字段
+
+命令
+    设置键对应的字段和值：hset key field value
+    获取键对应的字段值：hget key field
+    设置多个字段的值：hmset field value field1 value1 ...
+    获取多个字段的值：hmget field1 field2 ...
+    获取键中的所有字段：hgetall key
+
+    判断字段是否存在：hexists key field
+
+    字段存在时不赋值：hsetnx key field value
+
+    增加字段数字：hincrby key field value
+        键不存在会新建一个键并初始化为0
+
+    删除字段：hdel key field ...
+
+    只获取字段名：hkets key
+    只获取字段值：hvals key
+
+    获取字段数量：hlen key
+
+
+
+列表类型：list 双向列表
+
+    命令
+        左端增加元素：lpush key value
+        右端增加元素：rpush key value
+
+        左端弹出元素：lpop key
+        右端弹出元素：rpop key
+
+        获取列表中元素的个数：llen key
+
+        获取列表片段：lrange key start end
+            0左边第一个
+            -1右边第一个
+
+        删除列表中指定的值：lrem key count value
+            count < 0 右边前count个值为value的数
+            count > 0 左边前count个职位value的数
+            count = 0 删除所有值为value的元素
+
+        获取指定位置元素的值：lindex key index
+        设置指定位置元素的值：lset key index value
+
+        向列表中值为pivot的元素之后插入元素：linsert key before pivot value
+        向列表中值为pivot的元素之前插入元素：linsert key after pivot value
+
+        将元素从一个列表转到另一个列表：rpoplpush source destination
+
+        只保留列表指定片段：ltrim key start end
 
