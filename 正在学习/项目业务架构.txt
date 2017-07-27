@@ -9,7 +9,7 @@ framework包
             Marshal()
             Unmarshal()
 
-        IprocBase interface
+        IProcBase interface
             Handle()
             ParseReq()
             SerializeRsp()
@@ -17,6 +17,22 @@ framework包
         ProcBase struct
             SerializeRsp()
             ParseReq()
+
+    proc_mgr.go
+        cmdMap  var#全局变量，一个登录类型到IProcBase的映射
+        RegisterCmd()#将cmd命令和IProcBase存储到cmdMap当中
+
+    framewok.go
+        errCmdNotRegister var#全局变量，存储未知请求类型的错误
+        Run()#接收请求，发送响应
+            resgisterEtcd()
+            runTCPServer()#建立一个TCP服务器
+                handleConnenction()#解码收到的请求包，生成响应包并发送
+                    handleRequest()#判断请求的有效性
+                        handle()#根据请求类型生成序列化之后的响应包主体
+
+
+
 
 
 
@@ -27,24 +43,51 @@ game包
 
     config包
 
-    proc包
-        build.go
-
-        fri_island.go
-
+    proc包#定义各种请求类型和处理方式
+        build.go#定义build请求的handle函数
+        fri_island.go#如何处理fri_island请求
         friend_list.go
-
         hello.go
-
-        login.go
-
-
+        login.go#如何处理login请求，handle()函数
         rank.go
-
         settle_round.go
-
         update.go
 
     game.go
-        Run()
-        registerCmd()
+        Run()#启动服务器
+            registerCmd()#调用RegisterCmd()将proc的请求类型映射到对应的结构体
+            调用框架的run()
+
+
+core包
+    config包
+
+    handle包
+        job.go#定义了job结构体和jobqueue管道
+            Job struct#包含packet和连接两个成员
+            JobQueue chan Job#一个Job类型的管道
+        tcp_server.go
+
+        worker.go
+            Worker struct#包含一个JobQueue对象
+                JobQueue
+                work()#
+
+
+
+    proc包
+        build.go
+        get_usercore.go
+        prize.go
+        proc_mgr.go
+
+    register包
+        register.go
+            Register()#注册本地ip到etcd
+
+    core.go
+        Run()#启动服务器
+            registerCmd()#调用RegisterCmd()将proc的结构体映射到对应的请求类型
+            调用register.Register()
+            调用handle.InitWorkerPool()
+            调用handle.RunTCPServer()

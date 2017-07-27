@@ -1,0 +1,20 @@
+enum.proto
+    增加一个请求类型：GAME_CMD_SHARE_REQ
+
+game.proto
+    增加一个shareReq结构，客户端发送来的用于保存用户成功分享的信息
+    string UID_Who#发送者ID
+    string ID_To#接收者ID
+    Date Time_Share#发送时间
+
+game.go的改动：
+    registerCmd()函数中增加注册新的请求
+
+    proc包
+        增加一个名为share.go的文件，用于处理用户的分享操作
+        share.go
+            Share struct#定义Share结构体
+                handle()#处理shareReq
+                    调用ParseRe()
+
+

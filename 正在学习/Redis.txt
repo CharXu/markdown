@@ -154,6 +154,7 @@ Redis入门
 
         左端弹出元素：lpop key
         右端弹出元素：rpop key
+        右端弹出元素，无元素时阻塞：brpop key waittime
 
         获取列表中元素的个数：llen key
 
@@ -175,4 +176,87 @@ Redis入门
         将元素从一个列表转到另一个列表：rpoplpush source destination
 
         只保留列表指定片段：ltrim key start end
+
+
+
+
+集合类型：set 没有相同元素的无序元素的组合
+底层通过值为空的散列表实现
+
+    命令：
+        增加元素：sadd key value value1 ...
+        删除元素：srem key value value1 ...
+
+        获得集合中的所有元素：smembers key
+        判断元素是否存在：sismember key value
+
+        集合间的差集运算：sdiff A B
+        集合间的交集运算：sinter A B
+        集合间的并集运算：sunion A B
+
+        获得集合中的元素个数：smembers key
+        随机获得集合中的元素：srandmenber key [count]
+
+        进行集合运算并存储：sdiffstore destination key key1
+
+        从集合中弹出一个元素：spop key
+
+
+有序集合类型：sorted set
+    使用散列表和跳跃表实现
+    比列表类型更耗费内存
+    索引时间复杂度为logN
+
+    命令：
+        增加分数和元素：zadd key score member
+        获取元素的分数：zscore key member
+
+        获取排名在某个范围内的元素列表：zrange key start stop [withscores]
+        获取指定分数范围的原书：zrangebyscore key min max [withscores] [limit offset count]
+
+        增加某个元素的分数：zincrby key increment member
+
+        获得集中元素的数量：zcard key
+        获得指定分数范围元素的数量：zcount key min max
+
+        删除元素：zrem key member
+        按照排名范围删除元素：zremrangebyrank key start end
+        按照分数范围删除元素：zremrangebyscore key min max
+
+        获得元素排名：zrank key member
+
+
+
+事务处理
+    事务开始：multi
+    事务结束：exec
+
+
+    监控命令：watch
+        监控一个键或者多个键
+        一旦其中一个被修改之后的事务就不会执行
+        监控持续到exec命令
+
+    重新设置键的过期时间：expire key seconds
+    查看键的过期时间：ttl key
+    取消键的过期时间：presist key
+        set或getset命令或清除键的过期时间
+
+    排序命令：sort key
+        按照指定字段排序：by
+        显示指定的排序结果：get
+        存储排序结果：store
+
+
+任务队列
+    阻塞右边弹出元素：brpop key ... [timeout]
+                     blpop
+
+消息订阅
+    发布消息：publish channel message
+    订阅消息：subscribe channel
+    取消订阅：unsubscribe channel
+
+
+
 
