@@ -91,3 +91,20 @@ core包
             调用register.Register()
             调用handle.InitWorkerPool()
             调用handle.RunTCPServer()
+
+
+common包
+    datamgr包
+        data_util.go
+        user_account.go#判断用户是否存在，根据openID注册新用户
+
+
+    lrucache包
+
+    prize包
+
+    random包
+
+    rescache包
+
+    server包

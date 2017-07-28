@@ -50,6 +50,8 @@ append函数必须有变量接收
 
 - 使用多重赋值
 
+统一定义一个错误类型
+
 ## comma-ok断言检测 ##
 
     value, ok := element.(Type)
@@ -74,10 +76,10 @@ append函数必须有变量接收
 			think()
 		}
 		type student struct{
-			
+
 		}
 		func (s *student) think () {
-			
+
 		}
 
 		var m men
@@ -91,7 +93,7 @@ append函数必须有变量接收
 - 函数内部通过：=初始化的变量，只在函数内部有效，函数外无法访问函数内部的变量
 
 - 但是return会自动把函数内部变量转化成全局变量
-		
+
 
 
 

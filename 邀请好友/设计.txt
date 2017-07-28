@@ -1,20 +1,91 @@
+###################################################################################
+用户发送邀请的处理，定义函数、结构等
+###############################################################################
 enum.proto
-    增加一个请求类型：GAME_CMD_SHARE_REQ
+    增加一个请求类型：GAME_CMD_invited_REQ
+    增加一个响应类型：GAME_CMD_INVITED_RSP
 
 game.proto
-    增加一个shareReq结构，客户端发送来的用于保存用户成功分享的信息
-    string UID_Who#发送者ID
-    string ID_To#接收者ID
-    Date Time_Share#发送时间
+    增加一个invitedReq结构，客户端发送来的用于保存用户成功分享的信息
+    string invitor_Who#发送者ID
+    repeated invitor
+        string ID_To#接收者ID
+        Date Time_invited#发送时间
 
-game.go的改动：
-    registerCmd()函数中增加注册新的请求
+    增加一个invitedRsp结构，响应客户端的请求
+    空内容
+
+game包
+    game.go的改动：
+        registerCmd()函数中增加注册新的请求
 
     proc包
-        增加一个名为share.go的文件，用于处理用户的分享操作
-        share.go
-            Share struct#定义Share结构体
-                handle()#处理shareReq
-                    调用ParseRe()
+        增加一个名为invited.go的文件，用于处理用户的分享操作
+        invited.go
+            invited struct#定义invited结构体
+                handle(req []byte)(rsp []byte, err error)#处理invitedReq
+                    invitedReq struct#定义invitedReq的结构体变量，嵌套ProcBase
+                    ParseReq()#调用ParseReq()得到invited的Req，错误处理
+                    Prize()#调用函数发送奖励
+                        #构造奖励结构
+                    RediDkeyAddress()#调用函数获得用户数据地址
+                    IfInvited()#调用函数在redis数据库中判断是否第一次被邀请
+                        UserinvitedAdd()#已经被邀请过，在原有列表增加邀请人
+                        UserinvitedNew()#没有被邀请过，新建邀请列表
+                    invitedRsp struct#响应包
+                    SerrializeRsp()#编码响应包
 
+                UserinvitedAdd(fbid, invitor, addr string)*invitedRsp#添加用户的被谁邀请的列表
+                    #构造响应包
+                    #获取用户redis地址
+                    AddUserInvited()#新的邀请人写入redis
+                    #返回一个包
+
+                UserinvitedNew(fbid, addr string)#生成用户的邀请列表
+                    #构造响应包
+                    #获取用户redis地址
+                    NewUserinvited()#redis生成新的邀请人
+                    #返回一个包
+
+common包
+    datamar包
+        增加一个user_invited.go文件
+        user_invited.go
+            IfInvited(fbid, addr string)(ok bool, err error)#判断用户是否被邀请过
+                GetRediClient()#获得连接redis的客户端
+                client.Get()#在redis中查找用户数据
+
+            NewUserinvited(fbid, invitor, addr string)error#为用户新建被邀请列表
+                GetRediClient()#获得连接redis客户端
+                invitor marshal-> []byte#invitor构建邀请列表
+                client.Set(fbid, list []byte)#在redis中新建一个key
+
+            AddUserInvited(fbid, invitor, addr string)error#为用户添加被邀请列表
+                GetRediClient()#获得连接redis客户端
+                Client.Get(fbid)#获得好友列表
+                Unmarshal()#解码好友列表
+                list.append()#添加新的邀请信息
+                    #检查是否有重复
+                Client.Set()
+
+        redis_key.go#增加一个rediskeyUserinvited的常量
+            rediskeyUserinvited = "Userinvited:%s"
+            #增加一个方法UserinvitedKey()
+            UserinvitedKey()#返回根据用户id区分的key
+
+
+#######################################################################################
+用户登录时的处理
+########################################################################################
+login.go
+    #新增新用户注册后的处理
+    rsp = p.userRegister(req, social, opt)
+                    +
+                    +
+    AccessToken -> FaceBook ID#获取AccessToken
+    IsInvited()#调用函数判断是否被邀请过
+        InvitedPrize()#是，向邀请双方发送奖励
+        #否，不做处理
+
+    InvitedPrize()#向邀请双方发送奖励
 
