@@ -1,0 +1,9 @@
+ syntax="proto3";
+
+package proto;
+
+message test {
+    int32 name = 1;
+    string sex = 2;
+}
+

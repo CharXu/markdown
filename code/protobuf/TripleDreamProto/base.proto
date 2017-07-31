@@ -1,7 +1,0 @@
-syntax = "proto3";
-
-package aladinfun.TripleDream.proto;
-
-message RspHead {
-    uint32 RetCode = 1;
-}

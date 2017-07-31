@@ -2,6 +2,11 @@
 ##项目业务架构说明
 ##
 
+
+uid：注册用户才拥有uid，通过openid生成
+openid：通过openid唯一标识一个用户，数据库中标识用户的依据
+siteid：
+
 framework包
     proc_base.go
 
@@ -24,12 +29,18 @@ framework包
 
     framewok.go
         errCmdNotRegister var#全局变量，存储未知请求类型的错误
-        Run()#接收请求，发送响应
+        Run()#接收请求，发出响应
             resgisterEtcd()
             runTCPServer()#建立一个TCP服务器
                 handleConnenction()#解码收到的请求包，生成响应包并发送
                     handleRequest()#判断请求的有效性
-                        handle()#根据请求类型生成序列化之后的响应包主体
+                        p.handle()#根据请求类型生成序列化之后的响应包主体
+
+    comm.go
+        EncodeRequestHead()
+        DecodeRequestHead()
+        SendTo()
+
 
 
 
@@ -40,8 +51,10 @@ framework包
 
 game包
     auth包
+        Login()#处理facebook请求
 
     config包
+        Config struct#配置文件
 
     proc包#定义各种请求类型和处理方式
         build.go#定义build请求的handle函数
@@ -49,6 +62,15 @@ game包
         friend_list.go
         hello.go
         login.go#如何处理login请求，handle()函数
+            Handle()#处理login请求
+                解析请求
+                判断登录类型
+                    调用auth.login()处理facebook登录
+                RediDKeyAddress()#获得用户数据存储地址
+                UserExists()#根据social信息判断用户是否存在
+                    userLogin()#存在返回登录包
+                    userRegister()#不存在注册
+
         rank.go
         settle_round.go
         update.go
@@ -61,6 +83,7 @@ game包
 
 core包
     config包
+        Config struct
 
     handle包
         job.go#定义了job结构体和jobqueue管道
@@ -108,3 +131,21 @@ common包
     rescache包
 
     server包
+
+router包
+    router.go
+        Run()#启动服务器
+            loadServer()
+            go watchServer()
+
+            go listenSignal()
+            runHTTPServe()#监听http请求
+                调用http.HandleFunc()
+
+
+
+auth包
+    Run()#启动服务器
+        registerCmd()
+        调用frw.Run()
+

@@ -1,4 +1,0 @@
-[submodule "base"]
-	path = base
-	url = git@gitlab.boomegg.net:aladinfun.com/proto.git
-	branch = master

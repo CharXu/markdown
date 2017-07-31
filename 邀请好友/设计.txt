@@ -29,7 +29,7 @@ game包
                     Prize()#调用函数发送奖励
                         #构造奖励结构
                     RediDkeyAddress()#调用函数获得用户数据地址
-                    IfInvited()#调用函数在redis数据库中判断是否第一次被邀请
+                    IsInvited()#调用函数在redis数据库中判断是否第一次被邀请
                         UserinvitedAdd()#已经被邀请过，在原有列表增加邀请人
                         UserinvitedNew()#没有被邀请过，新建邀请列表
                     invitedRsp struct#响应包
@@ -51,7 +51,7 @@ common包
     datamar包
         增加一个user_invited.go文件
         user_invited.go
-            IfInvited(fbid, addr string)(ok bool, err error)#判断用户是否被邀请过
+            IsInvited(fbid, addr string)(ok bool, err error)#判断用户是否被邀请过
                 GetRediClient()#获得连接redis的客户端
                 client.Get()#在redis中查找用户数据
 

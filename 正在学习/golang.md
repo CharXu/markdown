@@ -52,6 +52,8 @@ append函数必须有变量接收
 
 统一定义一个错误类型
 
+
+
 ## comma-ok断言检测 ##
 
     value, ok := element.(Type)
@@ -94,6 +96,13 @@ append函数必须有变量接收
 
 - 但是return会自动把函数内部变量转化成全局变量
 
+slice的用法
+	可以直接进行切片的转化
+	切片的操作都是指针
 
+
+单元测试
+	func TestFunc(t *testing.T){}
+	t.error
 
 
